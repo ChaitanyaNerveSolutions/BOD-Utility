@@ -1,0 +1,94 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using System.Threading;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using System.Net.Sockets;
+using System.Net;
+
+namespace B
+{
+    class Program
+    {        
+        public static string data = null;
+        public static bool IsConnected = false;
+        public static byte[] bytes = new Byte[1024];
+
+        public static IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
+        public static IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 9900);
+
+
+        public static Socket BODServer = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+        public static int attempt = 0;
+
+        public static void Main(String[] args)
+        {
+           Process.Start(@"D:\Snehadri Nerve\Prime-Axis-Email\Prime-Axis-Email\Gateway\Gateway\bin\Debug\Gateway.exe");
+            
+            StartListening();
+            
+        }
+
+        public static void StartListening()
+        {    
+            try
+            {
+                BODServer.Bind(localEndPoint);
+                BODServer.Listen(0);
+                
+
+                while (!IsConnected && attempt < 5)
+                {
+
+                    Console.WriteLine("waiting for connection.......");
+
+
+                    Socket server = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+                    new Thread(() => { server = BODServer.Accept(); Console.WriteLine("Connected"); }).Start();
+
+                    data = null;
+
+                     
+                    while (attempt<5)
+                    {
+                        Thread.Sleep(1000);
+                        Console.WriteLine(attempt);
+                        if (server.Connected)
+                        {
+                            int bytesRec = server.Receive(bytes);
+                            data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
+                            if (data == "Gateway Started")
+                            {
+                                byte[] msg = Encoding.ASCII.GetBytes("START");
+                                server.Send(msg);
+                                IsConnected = true;
+                                Console.WriteLine("Text received : {0}", data);
+                                server.Shutdown(SocketShutdown.Both);
+                                break;
+                            }
+                            
+                        }
+                        attempt += 1;
+                    } 
+                    server.Close();   
+                }
+                Console.WriteLine("\nPress ENTER to continue...");
+                Console.Read();
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+        }
+    }
+}

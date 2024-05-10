@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<BOD-Utility>
+	<LOGIN>
+		<GUEST>ftpguest,FTPGUEST</GUEST>
+		<FO>faoguest,FAOGUEST</FO>
+		<CD>cdsguest,CDSGUEST</CD>
+		<MEMBER-CODE>175490197</MEMBER-CODE>
+		<SECRET-KEY>VVy/eewOhGytlCkvtaagkL1oZYFLH6hVRCB/kXmkcxk=</SECRET-KEY>
+		<API-LOGINID>wrongloginid</API-LOGINID>
+		<API-PASSWORD>wrongpassword123</API-PASSWORD>
+	</LOGIN>
+	<!--Segment wise Configuration of the files-->
+	<SEGMENTS>
+		<CM>
+			<SECURITY>
+				<NAME>NSE_CM_security_$date:ddMMyyyy$.csv.gz</NAME>
+				<FTP></FTP>
+				<WEBSITE></WEBSITE>
+				<LOCAL>C:\BOD_Files\</LOCAL>
+			</SECURITY>
+			<BHAVCOPY>
+				<NAME>BhavCopy_NSE_CM_0_0_0_$date:yyyyMMdd$_F_0000.csv</NAME>
+				<FTP></FTP>
+				<WEBSITE>https://nsearchives.nseindia.com/content/cm/</WEBSITE>
+				<LOCAL>C:\BOD_Files\</LOCAL>
+			</BHAVCOPY>
+			<BSE_SCRIP>
+				<NAME>BSE_EQ_SCRIP_$date:ddMMyyyy$.csv</NAME>
+				<FTP></FTP>
+				<WEBSITE>https://www.bseindia.com/downloads/Help/file/scrip.zip</WEBSITE>
+				<LOCAL>C:\BOD_Files\</LOCAL>
+			</BSE_SCRIP>
+			<BSECM_BHAVCOPY>
+				<NAME>BSE_EQ_BHAVCOPY_$date:ddMMyyyy$.zip</NAME>
+				<FTP></FTP>
+				<WEBSITE>https://www.DummyUrl.com/download/BhavCopy/Equity/</WEBSITE>
+				<LOCAL>C:\BOD_Files\</LOCAL>
+			</BSECM_BHAVCOPY>
+			<NNF_SECURITY>
+				<NAME>nnf_security.gz</NAME>
+				<FTP></FTP>
+				<WEBSITE></WEBSITE>
+				<LOCAL>C:\BOD_Files\</LOCAL>
+				<!--not in use-->
+			</NNF_SECURITY>
+		</CM>
+
+		<FO>
+			<CONTRACT>
+				<NAME>NSE_FO_contract_$date:ddMMyyyy$.csv.gz</NAME>
+				<FTP></FTP>
+				<WEBSITE></WEBSITE>
+				<LOCAL>C:\BOD_Files\</LOCAL>
+			</CONTRACT>
+			<BHAVCOPY>
+				<NAME>BhavCopy_NSE_FO_0_0_0_$date:yyyyMMdd$_F_0000.csv</NAME>
+				<FTP></FTP>
+				<WEBSITE>https://nsearchives.nseindia.com/content/fo/</WEBSITE>
+				<LOCAL>C:\BOD_Files\</LOCAL>
+			</BHAVCOPY>
+			<SECBAN>
+				<NAME>fo_secban_$date:ddMMyyyy$.csv</NAME>
+				<FTP></FTP>
+				<WEBSITE>https://www.DummyUrl.com/archives/fo/sec_ban/</WEBSITE>
+				<LOCAL>C:\BOD_Files\</LOCAL>
+			</SECBAN>
+			<DAILY_SNAPSHOT>
+				<NAME>ind_close_all_$date:ddMMyyyy$.csv</NAME>
+				<FTP></FTP>
+				<WEBSITE>https://www.DummyUrl.com/content/indices/</WEBSITE>
+				<LOCAL>C:\BOD_Files\</LOCAL>
+			</DAILY_SNAPSHOT>
+			<MF-HAIRCUT>
+				<NAME>MF_VAR_$date:ddMMyyyy$.csv</NAME>
+				<FTP></FTP>
+				<WEBSITE>https://www.DummyUrl.com/archives/equities/mf_haircut/</WEBSITE>
+				<LOCAL>C:\BOD_Files\</LOCAL>
+			</MF-HAIRCUT>
+			<COLLATERAL-HAIRCUT>
+				<NAME>APPSEC_COLLVAL_$date:ddMMyyyy$.csv</NAME>
+				<FTP></FTP>
+				<WEBSITE>https://www.DummyUrl.com/content/equities/</WEBSITE>
+				<LOCAL>C:\BOD_Files\</LOCAL>
+			</COLLATERAL-HAIRCUT>
+		</FO>
+
+		<CD>
+			<CONTRACT>
+				<NAME>NSE_CD_contract_$date:ddMMyyyy$.csv.gz</NAME>
+				<FTP></FTP>
+				<WEBSITE></WEBSITE>
+				<LOCAL>C:\BOD_Files\</LOCAL>
+			</CONTRACT>
+			<BHAVCOPY>
+				<NAME>BhavCopy_NSE_CD_0_0_0_$date:yyyyMMdd$_F_0000.csv</NAME>
+				<FTP></FTP>
+				<WEBSITE>https://nsearchives.nseindia.com/archives/cd/bhav/</WEBSITE>
+				<LOCAL>C:\BOD_Files\</LOCAL>
+			</BHAVCOPY>
+		</CD>
+	</SEGMENTS>
+
+	<MCX>
+		<FILE>
+			<NAME>MCXScrips.bcp</NAME>
+			<SCRIPFILEPATH>C:\Prime\,C:\mcx_files</SCRIPFILEPATH>
+			<DAILYMARGIN>C:\mcx_files\</DAILYMARGIN>
+			<BHAVCOPYPATH>C:\Prime\</BHAVCOPYPATH>
+		</FILE>
+	</MCX>
+
+
+	<!--End of Segment wise Configuration of the files-->
+
+	<!--URLs for Span and Exposure Download: Format <tag>ftp,web,local</tag-->
+	<URLs>
+		<SPAN>,https://www.DummyUrl.com/archives/nsccl/span/,C:\BOD_Files\</SPAN>
+		<!--FO-->
+		<CD-SPAN>C:\BOD_Files\</CD-SPAN>
+		<EXPOSURE>,https://www.DummyUrl.com/archives/exp_lim/,C:\BOD_Files\</EXPOSURE>
+		<!--FO-->
+		<VAREXPOSURE>,https://archives.nseindia.com/archives/nsccl/var/,C:\BOD_Files\</VAREXPOSURE>
+		<NIFTY_EXPOSURE>Filler,C:\BOD_Files\</NIFTY_EXPOSURE>
+		<!--GUEST-->
+		<OTM>,C:\BOD_Files\</OTM>
+		<!--FO-->
+		<!--FO-->
+		<BSE-SPAN>C:\BOD_Files\</BSE-SPAN>
+		<BSE-EXPOSURE>C:\BOD_Files\</BSE-EXPOSURE>
+	</URLs>
+
+	<!--
+	<SAVEPATH>
+		<CONTRACT>C:\Prime\,C:\bodTest\</CONTRACT>
+		<SECURITY>C:\Prime\,C:\bodTest\</SECURITY>
+		<CD_CONTRACT>C:\Prime\</CD_CONTRACT>
+		<FO_BHAVCOPY>C:\bodTest\,C:\Prime\</FO_BHAVCOPY>
+		<CM_BHAVCOPY>C:\Prime\,C:\bodTest\</CM_BHAVCOPY>
+		<CD_BHAVCOPY>C:\Prime\</CD_BHAVCOPY>
+		<EXPOSURE>C:\SpanMargin\</EXPOSURE>
+		<SPAN>C:\SpanMargin\</SPAN>
+		<VAREXPOSURE>C:\Prime\VARMargin\</VAREXPOSURE>
+		<DAILY_SNAPSHOT>C:\Prime\</DAILY_SNAPSHOT>
+		<SPAN-EXTENSTIONS>s,i05,i04,i03,i02,i01</SPAN-EXTENSTIONS>
+		<VAR-EXTENSTIONS>6,5,4,3,2,1</VAR-EXTENSTIONS>
+		<FO_SECBAN>C:\Prime\Other\</FO_SECBAN>
+		<BSE-SPAN-EXTENSTIONS>FINAL,04,03,02,01,00</BSE-SPAN-EXTENSTIONS>
+		<SPAN-LOGS>C:\SpanMargin\Logs\</SPAN-LOGS>
+		<BSECM_BHAVCOPY>C:\Prime\</BSECM_BHAVCOPY>
+		<BSECM_SCRIP>C:\BOD_FILES\BSESCRIP\</BSECM_SCRIP>
+		<NNF-SECURITY>C:\Prime\</NNF-SECURITY>
+		<MF-HAIRCUT>C:\Prime\</MF-HAIRCUT>
+		<COLLATERAL-HAIRCUT>C:\Prime\Other\</COLLATERAL-HAIRCUT>
+	</SAVEPATH>
+	-->
+
+	<SAVEPATH>
+		<CM_SECURITY>C:\Prime\,C:\bodTest\</CM_SECURITY>
+		<CM_BHAVCOPY>C:\Prime\,C:\bodTest\</CM_BHAVCOPY>
+		<CM_BSE_SCRIP>C:\BOD_FILES\BSESCRIP\</CM_BSE_SCRIP>
+		<CM_BSE_BHAVCOPY>C:\Prime\</CM_BSE_BHAVCOPY>
+		<CM_NNF_SECURITY>C:\Prime\</CM_NNF_SECURITY>
+
+		<FO_CONTRACT>C:\Prime\,C:\bodTest\</FO_CONTRACT>
+		<FO_BHAVCOPY>C:\bodTest\,C:\Prime\</FO_BHAVCOPY>
+		<FO_SECBAN>C:\Prime\Other\</FO_SECBAN>
+		<FO_DAILY_SNAPSHOT>C:\Prime\</FO_DAILY_SNAPSHOT>
+		<FO_MF-HAIRCUT>C:\Prime\</FO_MF-HAIRCUT>
+		<FO_COLLATERAL-HAIRCUT>C:\Prime\Other\</FO_COLLATERAL-HAIRCUT>
+
+		<CD_CONTRACT>C:\Prime\</CD_CONTRACT>
+		<CD_BHAVCOPY>C:\Prime\</CD_BHAVCOPY>
+
+		<EXPOSURE>C:\SpanMargin\</EXPOSURE>
+		<SPAN>C:\SpanMargin\</SPAN>
+		<VAREXPOSURE>C:\Prime\VARMargin\</VAREXPOSURE>
+		<SPAN-EXTENSTIONS>s,i05,i04,i03,i02,i01</SPAN-EXTENSTIONS>
+		<VAR-EXTENSTIONS>6,5,4,3,2,1</VAR-EXTENSTIONS>
+		<BSE-SPAN-EXTENSTIONS>FINAL,04,03,02,01,00</BSE-SPAN-EXTENSTIONS>
+		<SPAN-LOGS>C:\SpanMargin\Logs\</SPAN-LOGS>
+	</SAVEPATH>
+
+
+	<INTERVAL>
+		<SPAN-RECHECK-SECONDS>300</SPAN-RECHECK-SECONDS>
+		//
+		<SPAN-WAIT-SECONDS>10</SPAN-WAIT-SECONDS>
+	</INTERVAL>
+
+	<OTHER>
+		<MCX-CONTRACT-CONTAINS-HEADERS>false</MCX-CONTRACT-CONTAINS-HEADERS>
+	</OTHER>
+
+	<AUTOMATICSETTINGS>
+		<ATTEMPTS>8</ATTEMPTS>
+		<INTERVAL>2</INTERVAL>
+		<STARTNOTIS>Yes</STARTNOTIS>
+		<START_CD_COMPONENTS>No</START_CD_COMPONENTS>
+		<CDFEEDPATH>C:\Users\musha\OneDrive\Documents\Feed Receiver 16062023\CDFeedReceiver_Secure\CD FeedReceiver.exe</CDFEEDPATH>
+		<PS0-FOLDER-NEW-FORMAT>C:\Prime\PS03-NEW</PS0-FOLDER-NEW-FORMAT>
+		<CMFEEDPATH>C:\Users\musha\OneDrive\Documents\Feed Receiver 16062023\CMFeedReceiver_Secure\CM FeedReceiver.exe</CMFEEDPATH>
+		<FOFEEDPATH>C:\Users\musha\OneDrive\Documents\Feed Receiver 16062023\FeedReceiverFO_Secure\FO FeedReceiver.exe</FOFEEDPATH>
+		<GATEWAYPATH>C:\Users\musha\OneDrive\Documents\GitHub\n.Prime-MOFSL\Gateway - MsSql\Gateway\bin\Debug\Gateway.exe</GATEWAYPATH>
+		<ENGINEPATH>C:\Users\musha\OneDrive\Documents\GitHub\n.Prime-MOFSL\Engine\Engine\bin\Debug\Engine.exe</ENGINEPATH>
+		<NOTISEQPath>C:\nPrime\NOTIS API MANAGER 21042023\NOTIS API EQ Manager.exe</NOTISEQPath>
+		<NOTISFOPATH>C:\nPrime\NOTIS API MANAGER 21042023\NOTIS API FO Manager.exe</NOTISFOPATH>
+		<NOTISCDPATH>C:\nPrime\NOTIS API MANAGER 21042023\NOTIS API CD Manager.exe</NOTISCDPATH>
+		<DAY1FOLDER>C:\Prime\Day1</DAY1FOLDER>
+		<PSO3FOLDER>C:\Prime\PS03</PSO3FOLDER>
+		<BHAVCOPYPATH>C:\Prime</BHAVCOPYPATH>
+		<CLIENTFULLUPLOADPATH>C:\Prime\ClientMaster\Full Upload</CLIENTFULLUPLOADPATH>
+		<CLIENTPARTIALUPLOADPATH>C:\Prime\ClientMaster\Partial Upload</CLIENTPARTIALUPLOADPATH>
+		<USERMAPPINGFILEPATH>C:\Prime\ClientMaster\Mapping</USERMAPPINGFILEPATH>
+		<FROMEMAIL>musharraf@nerve.solutions</FROMEMAIL>
+		<TOEMAIL>ciydobelmu@gufum.com</TOEMAIL>
+		<PASSWORD>hljlidsdpckzfsun</PASSWORD>
+		<SMTP>smtp.gmail.com</SMTP>
+	</AUTOMATICSETTINGS>
+</BOD-Utility>
