@@ -464,296 +464,308 @@ namespace BOD_Utility
 
         private void DownloadDynamically()
         {
-            _logger.Debug("Entered DownloadDynamically() method");
-            //AddToList("Entered DonwloadDynamically() method");
+            try
+            { 
+
+                //setting xml node for traversal of files through config.xml
+                XmlDocument xmlDoc = new XmlDocument();
+                XDocument xDoc = new XDocument();
+                xDoc = XDocument.Load(ApplicationPath + "config.xml");
+                xmlDoc.Load(ApplicationPath + "config.xml");
+                XmlElement rootElm = xmlDoc.DocumentElement;
+                XmlNode segmentSubnodesList = xmlDoc.SelectSingleNode("/BOD-Utility/SEGMENTS");
 
 
-            XmlDocument xmlDoc = new XmlDocument();
-            XDocument xDoc = new XDocument();
-            xDoc = XDocument.Load(ApplicationPath + "config.xml");
-            xmlDoc.Load(ApplicationPath + "config.xml");
-            XmlElement rootElm = xmlDoc.DocumentElement;
-            XmlNode segmentSubnodesList = xmlDoc.SelectSingleNode("/BOD-Utility/SEGMENTS");
+                //setting licenses 
+                Dictionary<string, Boolean> enabledSegments = new Dictionary<string, Boolean>();
+                enabledSegments.Add("FO", _LicenseInfo.EnabledSegments.FO);
+                enabledSegments.Add("CD", _LicenseInfo.EnabledSegments.CD);
+                enabledSegments.Add("MCX", _LicenseInfo.EnabledSegments.MCX);
+                enabledSegments.Add("BSE", _LicenseInfo.EnabledSegments.BSE);
+                enabledSegments.Add("CM", _LicenseInfo.EnabledSegments.CM);
+                string segmentName;
 
 
-
-            Dictionary<string, Boolean> enabledSegments = new Dictionary<string, Boolean>();
-            enabledSegments.Add("FO", _LicenseInfo.EnabledSegments.FO);
-            enabledSegments.Add("CD", _LicenseInfo.EnabledSegments.CD);
-            enabledSegments.Add("MCX", _LicenseInfo.EnabledSegments.MCX);
-            enabledSegments.Add("BSE", _LicenseInfo.EnabledSegments.BSE);
-            enabledSegments.Add("CM", _LicenseInfo.EnabledSegments.CM);
-            string segmentName;
-
-
-            _logger.Debug("Traversing through segments");
-            //Traversing across segments -- Chaitanya 03/05/2024
-            foreach (XmlNode segment in segmentSubnodesList.ChildNodes)
-            {
-                segmentName = segment.Name;
-                XmlNode fileTypes = xmlDoc.SelectSingleNode("/BOD-Utility/SEGMENTS/" + segmentName);
-
-
-
-                //Traversing over different filetypes one by one -- Chaitanya 03/05/2024
-                _logger.Debug("Traversing through " + segmentName);
-                foreach (XmlNode fileType in fileTypes.ChildNodes)
+                _logger.Debug("Traversing through segments");
+                //Traversing across segments -- Chaitanya 03/05/2024
+                foreach (XmlNode segment in segmentSubnodesList.ChildNodes)
                 {
-                    _logger.Debug("\n==========================================================================\n Downloading " + segmentName + " " + fileType.Name + " dynamically.\n ---------------------------------------------------------------");
-                    AddToList(segmentName + " " + fileType.Name + " downloading........");
-                    _logger.Debug($"Checking license status: EnbabledSegments." + segmentName + ": {_LicenseInfo.EnabledSegments." + segmentName + "}");
-                    _logger.Debug("Fetching data from config.xml for file " + fileType.Name);
+                    segmentName = segment.Name;
+                    XmlNode fileTypes = xmlDoc.SelectSingleNode("/BOD-Utility/SEGMENTS/" + segmentName);
 
-                    //Files sources and name
-                    string website = fileType.SelectSingleNode("WEBSITE").InnerText;
-                    string localpath = fileType.SelectSingleNode("LOCAL").InnerText;
-                    var fileName = fileType.SelectSingleNode("NAME").InnerText;
-                    string fileGenericName = fileType.Name; //eg. CONTRACT, SECURITY etc
 
-                    //filename to search delete
-                    string filenametodelete;
 
-                    //logic to make filename searchable to delete
-                    int index = fileGenericName.IndexOf("_0", StringComparison.OrdinalIgnoreCase);//removes substring starting from _0
-                    filenametodelete = index != -1 ? fileGenericName.Substring(0, index) : fileGenericName;
-                    int index2 = fileGenericName.IndexOf("_$", StringComparison.OrdinalIgnoreCase);//removes substring starting from _$
-                    filenametodelete = index2 != -1 ? fileGenericName.Substring(0, index2) : fileGenericName;
-                    int index3 = fileGenericName.IndexOf(".", StringComparison.OrdinalIgnoreCase);//removes substring starting from .
-                    filenametodelete = index2 != -1 ? fileGenericName.Substring(0, index2) : fileGenericName;
-
-                    
-                    if (!enabledSegments[segmentName])
+                    //Traversing over different filetypes one by one -- Chaitanya 03/05/2024
+                    _logger.Debug("Traversing through " + segmentName);
+                    foreach (XmlNode fileType in fileTypes.ChildNodes)
                     {
-                        return;
-                    }
-                    try
-                    {
-                        //savepath tag name
-                        string savepathXmlTagName = segmentName + "_" + fileType.Name;
-                        //getting savepath 
-                        string[] arr_FolderPath = ((string)xDoc.Element("BOD-Utility").Element("SAVEPATH").Element(savepathXmlTagName)).Trim().Split(',');
-                        string[] arr_OldFiles;
+                        _logger.Debug("\n==========================================================================\n Downloading " + segmentName + " " + fileType.Name + " dynamically.\n ---------------------------------------------------------------");
+                        AddToList(segmentName + " " + fileType.Name + " downloading........");
+                        _logger.Debug($"Checking license status: EnbabledSegments." + segmentName + ": {_LicenseInfo.EnabledSegments." + segmentName + "}");
+                        _logger.Debug("Fetching data from config.xml for file " + fileType.Name);
 
-                        
+                        //Files sources and name
+                        string website = fileType.SelectSingleNode("WEBSITE").InnerText;
+                        string localpath = fileType.SelectSingleNode("LOCAL").InnerText;
+                        var fileName = fileType.SelectSingleNode("NAME").InnerText;
+                        string fileGenericName = fileType.Name; //eg. CONTRACT, SECURITY etc
 
-                        //logic to create directory(SAVEPATH) if not exists, and delete old files
-                        bool directorycreated = false;
-                        for (int i = 1; i < arr_FolderPath.Length; i++)
+                        //filename to search, to delete
+                        string filenametodelete;
+
+                        //logic to make filename searchable to delete
+                        int index = fileGenericName.IndexOf("_0", StringComparison.OrdinalIgnoreCase);//removes substring starting from _0
+                        filenametodelete = index != -1 ? fileGenericName.Substring(0, index) : fileGenericName;
+                        int index2 = fileGenericName.IndexOf("_$", StringComparison.OrdinalIgnoreCase);//removes substring starting from _$
+                        filenametodelete = index2 != -1 ? fileGenericName.Substring(0, index2) : fileGenericName;
+                        int index3 = fileGenericName.IndexOf(".", StringComparison.OrdinalIgnoreCase);//removes substring starting from .
+                        filenametodelete = index2 != -1 ? fileGenericName.Substring(0, index2) : fileGenericName;
+
+                        //checking
+                        if (!enabledSegments[segmentName])
                         {
-                            if (!Directory.Exists(arr_FolderPath[i]))
-                            {
-                                Directory.CreateDirectory(arr_FolderPath[i]);
-                            }
-                            else
-                            {
-                                arr_OldFiles = Directory.GetFiles(arr_FolderPath[i], filenametodelete);
-                                for (int j = 0; j < arr_OldFiles.Count(); j++)
-                                {
-                                    File.Delete(arr_OldFiles[j]);
-                                }
-                            }
+                            return;
                         }
-
-
-
-                        var dateToCheck = dateEdit_DownloadDate.DateTime;
-
-                        //changing date format as per Naming convention
-                        var filenameaccordingtoconfig = (fileName.Contains("$date:ddMMyyyy$") ? (fileName.Replace("$date:ddMMyyyy$", dateToCheck.STR("ddMMyyyy"))) : (fileName.Replace("$date:yyyyMMdd$", dateToCheck.STR("yyyyMMdd"))));
-
-                        string respectiveWebsiteFileName = "";
-
-                        //check for file in previous 7 days
-                        Boolean filedownloaded = false;
-                        for (int j = 0; j < 7; j++)
+                        try
                         {
-                            if (filedownloaded)
+
+                            //savepath tag name
+                            string savepathXmlTagName = segmentName + "_" + fileType.Name;
+                            //getting savepath 
+                            string[] arr_FolderPath = ((string) xDoc.Element("BOD-Utility").Element("SAVEPATH").Element(savepathXmlTagName)).Trim().Split(',');
+                            string[] arr_OldFiles;
+
+
+
+                            //logic to create directory(SAVEPATH) if not exists, and delete old files
+                            bool directorycreated = false;
+                            for (int i = 1; i < arr_FolderPath.Length; i++)
                             {
-                                break; 
-                            }
-
-                            //filename for website
-                            if (filenameaccordingtoconfig.EndsWith("csv")){
-                                respectiveWebsiteFileName = filenameaccordingtoconfig + ".zip";
-                            }
-                            else
-                            {
-                                //respectiveWebsiteFileName = filenameaccordingtoconfig;
-                            }
-
-                            //incase file name is present within website eg CM BSE_SCRIP
-                            if (website.EndsWith("zip"))
-                            {
-                                respectiveWebsiteFileName = "";
-                            }
-
-                            //download using API
-                            try
-                            {
-                                //fetching apiUrls from config.json
-                                string binDebugPath = AppDomain.CurrentDomain.BaseDirectory;
-                                string jsonApplicationPath = Path.Combine(binDebugPath, "config.json");
-                                _logger.Debug("config path " + jsonApplicationPath);
-                                string jsonData = File.ReadAllText(jsonApplicationPath);
-
-                                JObject json = JObject.Parse(jsonData);
-                                var jsonBODfilepath = segmentName + "." + fileType.Name;
-
-                                string apiUrlPath = (string)json.SelectToken(jsonBODfilepath);
-                                _logger.Debug("api urlpath : " + apiUrlPath);
-
-                                //Downloading using API
-                                var response = nNSEUtils.Instance.DownloadCommonFile(segmentName, apiUrlPath, respectiveWebsiteFileName, arr_FolderPath[0]);
-                                //_logger.Debug($"Download"+segmentName+" "+fileType.Name+"API Response: " + JsonConvert.SerializeObject(response));
-
-
-
-                                if (response.ResponseStatus == en_ResponseStatus.SUCCESS)
+                                if (!Directory.Exists(arr_FolderPath[i]))
                                 {
-                                    filedownloaded = true;
-                                    if (respectiveWebsiteFileName.EndsWith("zip"))
+                                    Directory.CreateDirectory(arr_FolderPath[i]);
+                                }
+                                else
+                                {
+                                    arr_OldFiles = Directory.GetFiles(arr_FolderPath[i], filenametodelete);
+                                    for (int j = 0; j < arr_OldFiles.Count(); j++)
                                     {
-                                        using (ZipFile zip = ZipFile.Read(arr_FolderPath[0] + respectiveWebsiteFileName))
-                                        {
-                                            zip.ExtractAll(arr_FolderPath[0], ExtractExistingFileAction.DoNotOverwrite);
-
-                                            File.Delete(arr_FolderPath[0] + $"{respectiveWebsiteFileName}");
-
-                                            //FOBhavcopyFilename = DecompressGZAndDelete(new FileInfo(arr_FolderPath[0] + respectiveFileName), string.Empty/*".csv"*/);
-
-
-                                            AddToList(segmentName + " " + fileType + ": " + $"{filenameaccordingtoconfig} downloaded successfully using API ;)");
-                                        }
-
-                                        //Dont know what use
-                                        /*_FOBhavcopy = BhavcopyFileName;
-                                        break;*/
-                                    }
-                                    else if (respectiveWebsiteFileName.EndsWith("gz"))
-                                    {
-                                        FileInfo localFile = new FileInfo(arr_FolderPath[0] + respectiveWebsiteFileName);
-                                        DecompressGZAndDelete(localFile, string.Empty/*".csv"*/);
-
+                                        File.Delete(arr_OldFiles[j]);
                                     }
                                 }
-
-                            }
-                            catch (Exception ex)
-                            {
-                                _logger.Error(ex, "Downloading " + segmentName + " " + fileType.Name + " from API: ");
                             }
 
 
+                            var dateToCheck = dateEdit_DownloadDate.DateTime;
+                            string respectiveWebsiteFileName = "";
+                            //check for file in previous 7 days
+                            Boolean filedownloaded = false;
 
-                            //Lets download from WEBSITE
-                            if (!filedownloaded)
+
+
+                            for (int j = 0; j < 7; j++)
                             {
-                                try
+                                if (filedownloaded)
                                 {
-                                    string url = website + respectiveWebsiteFileName;
-                                    _logger.Debug("Fetched url for web >>>>>>>>>>>>>>>>" + url);
-                                    //$"NSE_FO_bhavcopy_{dateToCheck.ToString("ddMMyyyy")}.csv";/*$"{dateEdit_DownloadDate.DateTime.STR("yyyy")}/{dateEdit_DownloadDate.DateTime.STR("MMM").UPP()}/fo{dateToCheck.STR("ddMMMyyyy").UPP()}bhav.csv.zip";*/
-                                    //BhavcopyFileName = $"NSE_FO_bhavcopy_{dateToCheck.ToString("ddMMyyyy")}.csv";
-                                    using (WebClient webClient = new WebClient())
-                                    {
-                                        _logger.Debug("Savepath is " + arr_FolderPath[0] + filenameaccordingtoconfig);
-                                        webClient.DownloadFile(url, arr_FolderPath[0] + respectiveWebsiteFileName);
-                                    }
-                                    if (respectiveWebsiteFileName.EndsWith(".zip"))
-                                    {
-                                        using (ZipFile zip = ZipFile.Read(arr_FolderPath[0] + respectiveWebsiteFileName))
-                                        {
-                                            zip.ExtractAll(arr_FolderPath[0], ExtractExistingFileAction.DoNotOverwrite);
-                                            _logger.Debug("deletion not getting executed");
-                                            File.Delete(arr_FolderPath[0] + $"{respectiveWebsiteFileName}");
-                                        }
-                                    }
-                                    else if (respectiveWebsiteFileName.EndsWith("gz"))
-                                    {
-                                        FileInfo localFile = new FileInfo(arr_FolderPath[0] + respectiveWebsiteFileName);
-                                        DecompressGZAndDelete(localFile, string.Empty/*".csv"*/);
-                                    }
-
-                                    //File.Delete(arr_BhavcopyFolderPath[0] + BhavcopyFileName.Replace(".gz", ".zip"));
-                                    AddToList(segmentName + " " + fileType.Name + $" {respectiveWebsiteFileName} downloaded successfully using WEBSITE =)");
-                                    //_FOBhavcopy = BhavcopyFileName; //BhavcopyFileName.Substring(0, BhavcopyFileName.LastIndexOf(".csv") + 4);
-                                    filedownloaded = true;
                                     break;
                                 }
-                                catch (Exception ee)
+
+                                var filenameaccordingtoconfig = (fileName.Contains("$date:ddMMyyyy$") ? (fileName.Replace("$date:ddMMyyyy$", dateToCheck.STR("ddMMyyyy"))) : (fileName.Replace("$date:yyyyMMdd$", dateToCheck.STR("yyyyMMdd"))));
+
+
+                                //filename for website
+                                if (filenameaccordingtoconfig.EndsWith("csv"))
                                 {
-                                    _logger.Error(ee, "Downloading" + segmentName + " " + fileType.Name + " from Website:");
-                                    _logger.Debug($"Url Passed: {website + respectiveWebsiteFileName}");
+                                    respectiveWebsiteFileName = filenameaccordingtoconfig + ".zip";
                                 }
-                            }
+                                else
+                                {
+                                    //respectiveWebsiteFileName = filenameaccordingtoconfig;
+                                }
 
+                                //incase file name is present within website eg CM BSE_SCRIP
+                                if (website.EndsWith("zip"))
+                                {
+                                    respectiveWebsiteFileName = "";
+                                }
 
-                            //lets download from localpath
-                            if (!filedownloaded)
-                            {
+                                //download using API
                                 try
                                 {
-                                    File.Copy(localpath + filenameaccordingtoconfig, arr_FolderPath[0] + filenameaccordingtoconfig, true);
-                                    AddToList(segmentName + " " + fileType.Name + ": " + $"{filenameaccordingtoconfig} copied successfully from localpath.");
+                                    //fetching apiUrls from config.json
+                                    string binDebugPath = AppDomain.CurrentDomain.BaseDirectory;
+                                    string jsonApplicationPath = Path.Combine(binDebugPath, "config.json");
+                                    _logger.Debug("config path " + jsonApplicationPath);
+                                    string jsonData = File.ReadAllText(jsonApplicationPath);
 
-                                    if (filenameaccordingtoconfig.EndsWith(".zip"))
+                                    JObject json = JObject.Parse(jsonData);
+                                    string jsonBODfilepath = segmentName + "." + fileType.Name;
+
+                                    string apiUrlPath = (string)json.SelectToken(jsonBODfilepath);
+                                    _logger.Debug("api urlpath : " + apiUrlPath);
+
+                                    //Downloading using API
+                                    var response = nNSEUtils.Instance.DownloadCommonFile(segmentName, apiUrlPath, respectiveWebsiteFileName, arr_FolderPath[0]);
+                                    //_logger.Debug($"Download"+segmentName+" "+fileType.Name+"API Response: " + JsonConvert.SerializeObject(response));
+
+
+
+                                    if (response.ResponseStatus == en_ResponseStatus.SUCCESS)
                                     {
-                                        using (ZipFile zip = ZipFile.Read(arr_FolderPath[0] + filenameaccordingtoconfig))
+                                        filedownloaded = true;
+                                        _logger.Debug($"after api success for {segmentName} {fileType.Name}------>" + filedownloaded);
+                                        if (respectiveWebsiteFileName.EndsWith("zip"))
                                         {
-                                            zip.ExtractAll(arr_FolderPath[0], ExtractExistingFileAction.DoNotOverwrite);
+                                            using (ZipFile zip = ZipFile.Read(arr_FolderPath[0] + respectiveWebsiteFileName))
+                                            {
+                                                zip.ExtractAll(arr_FolderPath[0], ExtractExistingFileAction.DoNotOverwrite);
+
+                                                File.Delete(arr_FolderPath[0] + $"{respectiveWebsiteFileName}");
+
+                                                //FOBhavcopyFilename = DecompressGZAndDelete(new FileInfo(arr_FolderPath[0] + respectiveFileName), string.Empty/*".csv"*/);
+
+
+                                                AddToList(segmentName + " " + fileType + ": " + $"{filenameaccordingtoconfig} downloaded successfully using API ;)");
+                                            }
+
+                                            //Dont know what use
+                                            /*_FOBhavcopy = BhavcopyFileName;
+                                            break;*/
+                                        }
+                                        else if (respectiveWebsiteFileName.EndsWith("gz"))
+                                        {
+                                            FileInfo localFile = new FileInfo(arr_FolderPath[0] + respectiveWebsiteFileName);
+                                            DecompressGZAndDelete(localFile, string.Empty/*".csv"*/);
+
                                         }
                                     }
-                                    else if (filenameaccordingtoconfig.EndsWith("gz"))
-                                    {
-                                        FileInfo localFile = new FileInfo(arr_FolderPath[0] + filenameaccordingtoconfig);
-                                        DecompressGZAndDelete(localFile, string.Empty/*".csv"*/);
-                                    }
-                                    //_FOBhavcopy = BhavcopyFileName;
-                                    filedownloaded = true;
-                                    break;
-                                }
-                                catch (Exception ee)
-                                {
-                                    _logger.Error(ee, "Copying " + segmentName + " " + fileType.Name + " from Local Folder:");
-                                    _logger.Debug($"Source : {localpath + filenameaccordingtoconfig} and Destination: {arr_FolderPath[0] + filenameaccordingtoconfig}");
-                                }
-                            }
-                            // subtract a day from the date to check the previous day
-                            dateToCheck = dateToCheck.AddDays(-1);
 
-                            // skip weekends
-                            if (dateToCheck.DayOfWeek == DayOfWeek.Saturday)
-                            {
+                                }
+                                catch (Exception ex)
+                                {
+                                    _logger.Error(ex, "Downloading " + segmentName + " " + fileType.Name + " from API: ");
+                                }
+
+
+
+                                //Lets download from WEBSITE
+                                if (!filedownloaded)
+                                {
+                                    try
+                                    {
+                                        string url = website + respectiveWebsiteFileName;
+                                        _logger.Debug("Fetched url for web >>>>>>>>>>>>>>>>" + url);
+                                        //$"NSE_FO_bhavcopy_{dateToCheck.ToString("ddMMyyyy")}.csv";/*$"{dateEdit_DownloadDate.DateTime.STR("yyyy")}/{dateEdit_DownloadDate.DateTime.STR("MMM").UPP()}/fo{dateToCheck.STR("ddMMMyyyy").UPP()}bhav.csv.zip";*/
+                                        //BhavcopyFileName = $"NSE_FO_bhavcopy_{dateToCheck.ToString("ddMMyyyy")}.csv";
+                                        using (WebClient webClient = new WebClient())
+                                        {
+                                            _logger.Debug("Savepath is " + arr_FolderPath[0] + filenameaccordingtoconfig);
+                                            webClient.DownloadFile(url, arr_FolderPath[0] + respectiveWebsiteFileName);
+                                            filedownloaded = true;
+                                            _logger.Debug($"after wesite success for {segmentName} {fileType.Name}------>" + filedownloaded);
+
+                                        }
+                                        if (respectiveWebsiteFileName.EndsWith(".zip"))
+                                        {
+                                            using (ZipFile zip = ZipFile.Read(arr_FolderPath[0] + respectiveWebsiteFileName))
+                                            {
+                                                zip.ExtractAll(arr_FolderPath[0], ExtractExistingFileAction.DoNotOverwrite);
+                                                File.Delete(arr_FolderPath[0] + $"{respectiveWebsiteFileName}");
+                                            }
+                                        }
+                                        else if (respectiveWebsiteFileName.EndsWith("gz"))
+                                        {
+                                            FileInfo localFile = new FileInfo(arr_FolderPath[0] + respectiveWebsiteFileName);
+                                            DecompressGZAndDelete(localFile, string.Empty/*".csv"*/);
+                                        }
+
+                                        //File.Delete(arr_BhavcopyFolderPath[0] + BhavcopyFileName.Replace(".gz", ".zip"));
+                                        AddToList(segmentName + " " + fileType.Name + $" {respectiveWebsiteFileName} downloaded successfully using WEBSITE =)");
+                                        //_FOBhavcopy = BhavcopyFileName; //BhavcopyFileName.Substring(0, BhavcopyFileName.LastIndexOf(".csv") + 4);
+                                        break;
+                                    }
+                                    catch (Exception ee)
+                                    {
+                                        _logger.Error(ee, "Downloading" + segmentName + " " + fileType.Name + " from Website:");
+                                        _logger.Debug($"Url Passed: {website + respectiveWebsiteFileName}");
+                                    }
+                                }
+
+
+                                _logger.Debug($"after wesite success for 2 {segmentName} {fileType.Name}------>" + filedownloaded);
+                                //lets download from localpath
+                                if (!filedownloaded)
+                                {
+                                    _logger.Debug("donwload from localpath not gettinng execute now");
+                                    try
+                                    {
+                                        File.Copy(localpath + filenameaccordingtoconfig, arr_FolderPath[0] + filenameaccordingtoconfig, true);
+                                        AddToList(segmentName + " " + fileType.Name + ": " + $"{filenameaccordingtoconfig} copied successfully from localpath.");
+
+                                        if (filenameaccordingtoconfig.EndsWith(".zip"))
+                                        {
+                                            using (ZipFile zip = ZipFile.Read(arr_FolderPath[0] + filenameaccordingtoconfig))
+                                            {
+                                                zip.ExtractAll(arr_FolderPath[0], ExtractExistingFileAction.DoNotOverwrite);
+                                            }
+                                        }
+                                        else if (filenameaccordingtoconfig.EndsWith("gz"))
+                                        {
+                                            FileInfo localFile = new FileInfo(arr_FolderPath[0] + filenameaccordingtoconfig);
+                                            DecompressGZAndDelete(localFile, string.Empty/*".csv"*/);
+                                        }
+                                        //_FOBhavcopy = BhavcopyFileName;
+                                        filedownloaded = true;
+                                        break;
+                                    }
+                                    catch (Exception ee)
+                                    {
+                                        _logger.Error(ee, "Copying " + segmentName + " " + fileType.Name + " from Local Folder:");
+                                        _logger.Debug($"Source : {localpath + filenameaccordingtoconfig} and Destination: {arr_FolderPath[0] + filenameaccordingtoconfig}");
+                                    }
+                                }
+                                _logger.Debug($"after localpath success for {segmentName} {fileType.Name}------>" + filedownloaded);
+
+                                // subtract a day from the date to check the previous day
                                 dateToCheck = dateToCheck.AddDays(-1);
+
+                                // skip weekends
+                                if (dateToCheck.DayOfWeek == DayOfWeek.Saturday)
+                                {
+                                    dateToCheck = dateToCheck.AddDays(-1);
+                                }
+                                else if (dateToCheck.DayOfWeek == DayOfWeek.Sunday)
+                                {
+                                    dateToCheck = dateToCheck.AddDays(-2);
+                                }
+
+
                             }
-                            else if (dateToCheck.DayOfWeek == DayOfWeek.Sunday)
+
+
+
+                            if (!filedownloaded)
                             {
-                                dateToCheck = dateToCheck.AddDays(-2);
+                                _logger.Debug(">>>>>>>>>>>>Download failed for " + segmentName + " " + respectiveWebsiteFileName + "\n ========================================================================");
+                                AddToList("Download failed for " + segmentName + " " + fileName);
                             }
 
-
                         }
 
 
-
-                        if (!filedownloaded)
+                        catch (Exception ee)
                         {
-                            _logger.Debug(">>>>>>>>>>>>Download failed for " + segmentName + " " + respectiveWebsiteFileName + "\n ========================================================================");
-                            AddToList("Download failed for " + segmentName + " " + respectiveWebsiteFileName);
+                            _logger.Error(ee, "Download " + segmentName + " " + fileType.Name + $" with {website}");
                         }
 
-                    }
-                    catch (Exception ee)
-                    {
-                        _logger.Error(ee, "Download " + segmentName + " " + fileType.Name+ $" with {website}");
                     }
 
                 }
-
             }
-
-
-
+            catch (Exception ee)
+            {
+                _logger.Error(ee, "DynamicDownloading");
+            }
         }
 
         private void DeleteOldSpanDirectories()

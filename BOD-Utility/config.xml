@@ -108,7 +108,7 @@
 			<BHAVCOPYPATH>C:\Prime\</BHAVCOPYPATH>
 		</FILE>
 	</MCX>
-
+X
 
 	<!--End of Segment wise Configuration of the files-->
 
@@ -157,7 +157,7 @@
 	<SAVEPATH>
 		<CM_SECURITY>C:\Prime\,C:\bodTest\</CM_SECURITY>
 		<CM_BHAVCOPY>C:\Prime\,C:\bodTest\</CM_BHAVCOPY>
-		<CM_BSE_SCRIP>C:\BOD_FILES\BSESCRIP\</CM_BSE_SCRIP>
+		<CM_BSE_SCRIP>C:\Prime\</CM_BSE_SCRIP>
 		<CM_BSE_BHAVCOPY>C:\Prime\</CM_BSE_BHAVCOPY>
 		<CM_NNF_SECURITY>C:\Prime\</CM_NNF_SECURITY>
 
