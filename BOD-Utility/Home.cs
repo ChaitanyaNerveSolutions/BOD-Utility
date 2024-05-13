@@ -662,7 +662,7 @@ namespace BOD_Utility
                                             _logger.Debug("Savepath is " + arr_FolderPath[0] + filenameaccordingtoconfig);
                                             webClient.DownloadFile(url, arr_FolderPath[0] + respectiveWebsiteFileName);
                                             filedownloaded = true;
-                                            _logger.Debug($"after wesite success for {segmentName} {fileType.Name}------>" + filedownloaded);
+                                            _logger.Debug($"after website success for {segmentName} {fileType.Name}------>" + filedownloaded);
 
                                         }
                                         if (respectiveWebsiteFileName.EndsWith(".zip"))
@@ -692,7 +692,7 @@ namespace BOD_Utility
                                 }
 
 
-                                _logger.Debug($"after wesite success for 2 {segmentName} {fileType.Name}------>" + filedownloaded);
+                                _logger.Debug($"after website success for 2 {segmentName} {fileType.Name}------>" + filedownloaded);
                                 //lets download from localpath
                                 if (!filedownloaded)
                                 {
